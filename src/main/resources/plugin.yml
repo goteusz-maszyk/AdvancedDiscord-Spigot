@@ -1,0 +1,6 @@
+name: AdvancedDiscord
+version: '${project.version}'
+main: me.gotitim.advanceddiscord.AdvancedDiscord
+api-version: 1.19
+authors: [ gotitim ]
+description: An advanced plugin for connecting minecraft and discord

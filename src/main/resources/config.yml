@@ -1,0 +1,37 @@
+auth-token: token-from-discord-dev-portal # Create an app in https://discord.com/developers/applications, go to "bot" and copy the auth token
+discord-channel: 1234567890 # An ID of a discord channel to send minecraft messages (deaths, advancements, chat, etc.)
+
+to-discord: # settings for sending minecraft messages on discord
+  chat:
+    content: "<%player-display%> %message%"
+  join:
+    embed-author-name: "%player-display%"
+    embed-author-icon: "https://crafatar.com/renders/head/%player-uuid%?overlay"
+    embed-color: 20,170,50
+  quit:
+    embed-author-name: "%player-display%"
+    embed-author-icon: "https://crafatar.com/renders/head/%player-uuid%?overlay"
+    embed-color: 200,70,20
+  death: # use %message-noname% to remove first word from death message - player name
+    content: "%message%"
+  advancement:
+    ignore: announce-chat # makes message not sent without throwing errors - announce-chat is only for advancements that are not announced to the chat
+    content: "%player-display% has made the advancement [%advancement-name%]"
+
+
+# Available placeholders:
+# %channel-name% - A name of a channel
+# %sender-display% - A display name of a user (username or guild-only nick)
+# %sender-tag% - A tag of a user (such as gotitim#5931)
+# %content% - Guess what...
+# %stickers% - Stickers attached to the message; configurable in "sticker-pattern"
+# %attachments% - Attachments attached to the message; configurable in "attachment-pattern"
+from-discord: "&6[DISCORD] &a#%channel-name% &b<%sender-tag%> &r%content% %stickers% %attachments%"
+
+# %every-name% - Names of every sticker separated with "sticker-spliterator"
+sticker-pattern: Stickers[%every-name%]
+sticker-spliterator: ", "
+
+# %every-name% - Names of every attachment separated with "attachment-spliterator"
+attachment-pattern: Attachments[%every-name%]
+attachment-spliterator: ", "
