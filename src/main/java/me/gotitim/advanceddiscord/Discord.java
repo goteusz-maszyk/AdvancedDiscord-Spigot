@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.function.Consumer;
 
-public class Discord {
+public final class Discord {
     private static TextChannel channel;
 
     public static void sendMessage(String message, Consumer<Message> onSend) {

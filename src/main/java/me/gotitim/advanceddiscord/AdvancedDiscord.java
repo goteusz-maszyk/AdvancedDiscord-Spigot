@@ -1,7 +1,7 @@
 package me.gotitim.advanceddiscord;
 
+import me.gotitim.advanceddiscord.listener.DiscordListener;
 import me.gotitim.advanceddiscord.listener.PlayerListener;
-import me.gotitim.advanceddiscord.listener.discord.MessageListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -33,7 +33,7 @@ public final class AdvancedDiscord extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        bot.addEventListener(new MessageListener());
+        bot.addEventListener(new DiscordListener());
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
     }
 

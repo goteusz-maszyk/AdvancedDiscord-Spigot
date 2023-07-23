@@ -1,4 +1,4 @@
-package me.gotitim.advanceddiscord.listener.discord;
+package me.gotitim.advanceddiscord.listener;
 
 import me.gotitim.advanceddiscord.AdvancedDiscord;
 import me.gotitim.advanceddiscord.Discord;
@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import static me.gotitim.advanceddiscord.AdvancedDiscord.getBot;
 import static me.gotitim.advanceddiscord.AdvancedDiscord.getConfigString;
 
-public class MessageListener extends ListenerAdapter {
+public class DiscordListener extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         AdvancedDiscord.getBot().setRequiredScopes("bot", "applications.commands");
@@ -29,8 +29,6 @@ public class MessageListener extends ListenerAdapter {
                         Permission.MESSAGE_ATTACH_FILES,
                         Permission.MESSAGE_HISTORY,
                         Permission.MESSAGE_ADD_REACTION,
-                        Permission.CREATE_PRIVATE_THREADS,
-                        Permission.CREATE_PUBLIC_THREADS,
                         Permission.VIEW_CHANNEL,
                         Permission.ADMINISTRATOR
             ));
