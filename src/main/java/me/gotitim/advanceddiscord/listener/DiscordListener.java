@@ -3,10 +3,13 @@ package me.gotitim.advanceddiscord.listener;
 import me.gotitim.advanceddiscord.AdvancedDiscord;
 import me.gotitim.advanceddiscord.Discord;
 import me.gotitim.advanceddiscord.Placeholders;
+import me.gotitim.advanceddiscord.command.NickCommand;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +25,7 @@ public class DiscordListener extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
         AdvancedDiscord.getBot().setRequiredScopes("bot", "applications.commands");
         if(AdvancedDiscord.getBot().getGuilds().size() == 0) {
+            AdvancedDiscord.getBot().setRequiredScopes("bot applications.commands");
             AdvancedDiscord.getInstance().getLogger().log(Level.WARNING, "The bot is not added to any guild! You can invite it here: "
                     + AdvancedDiscord.getBot().getInviteUrl(
                         Permission.MESSAGE_SEND,
@@ -35,6 +39,12 @@ public class DiscordListener extends ListenerAdapter {
             Bukkit.getServer().getPluginManager().disablePlugin(AdvancedDiscord.getInstance());
             return;
         }
+
+        AdvancedDiscord.getBot().upsertCommand("linkmc",
+                AdvancedDiscord.getInstance().getConfig().getString("discord-whitelist-cmd-description", "Add yourself to whitelist"))
+                .addOption(OptionType.STRING, "nick", AdvancedDiscord.getInstance().getConfig().getString("discord-nick-arg-description", "Your IGN"))
+                .queue();
+
         String channelId = AdvancedDiscord.getInstance().getConfig().getString("discord-channel");
         if(channelId == null) {
             AdvancedDiscord.getInstance().getLogger().log(Level.SEVERE, "Discord Channel not set! Disabling AdvancedDiscord.");
@@ -84,5 +94,12 @@ public class DiscordListener extends ListenerAdapter {
         }
 
         Bukkit.broadcastMessage(ph.parse(msg));
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        switch (event.getName()) {
+            case "linkmc" -> new NickCommand().exec(event);
+        }
     }
 }

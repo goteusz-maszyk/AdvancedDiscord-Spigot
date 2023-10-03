@@ -1,6 +1,9 @@
 auth-token: token-from-discord-dev-portal # Create an app in https://discord.com/developers/applications, go to "bot" and copy the auth token
 discord-channel: 1234567890 # An ID of a discord channel to send minecraft messages (deaths, advancements, chat, etc.)
 
+discord-whitelist-cmd-description: Add yourself to whitelist
+discord-nick-arg-description: Your In-game nick
+
 to-discord: # settings for sending minecraft messages on discord
   chat:
     content: "<%player-display%> %message%"
