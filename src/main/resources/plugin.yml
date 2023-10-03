@@ -4,3 +4,9 @@ main: me.gotitim.advanceddiscord.AdvancedDiscord
 api-version: 1.19
 authors: [ gotitim ]
 description: An advanced plugin for connecting minecraft and discord
+commands:
+  dynlist:
+    permission: advanceddiscord.dynlist
+permissions:
+  advanceddiscord.dynlist:
+    default: op
