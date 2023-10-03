@@ -3,7 +3,7 @@ package me.gotitim.advanceddiscord.listener;
 import me.gotitim.advanceddiscord.AdvancedDiscord;
 import me.gotitim.advanceddiscord.Discord;
 import me.gotitim.advanceddiscord.Placeholders;
-import me.gotitim.advanceddiscord.command.NickCommand;
+import me.gotitim.advanceddiscord.command.DiscordLinkCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -99,7 +99,7 @@ public class DiscordListener extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         switch (event.getName()) {
-            case "linkmc" -> new NickCommand().exec(event);
+            case "linkmc" -> new DiscordLinkCommand().exec(event);
         }
     }
 }
