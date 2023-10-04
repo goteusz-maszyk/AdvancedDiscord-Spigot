@@ -14,8 +14,7 @@ public class DiscordLinkCommand {
 
         Pair<String, UUID> playerData = AdvancedDiscord.getInstance().fetchPlayer(nick);
 
-        AdvancedDiscord.getInstance().whitelistNames.add(playerData.getLeft());
-        AdvancedDiscord.getInstance().whitelistUUIDs.add(playerData.getRight());
+        AdvancedDiscord.getInstance().addWhiteList(playerData);
 
         EmbedBuilder embed = new EmbedBuilder()
                 .setTitle(playerData.getLeft())

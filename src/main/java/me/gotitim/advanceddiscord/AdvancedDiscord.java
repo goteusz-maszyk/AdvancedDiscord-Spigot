@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.profile.PlayerProfile;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,9 +30,8 @@ import static com.google.gson.JsonParser.parseReader;
 public final class AdvancedDiscord extends JavaPlugin {
     private static JDA bot;
     private static AdvancedDiscord instance;
+    private WhitelistConfig whitelistConfig;
 
-    public final List<String> whitelistNames = new ArrayList<>();
-    public final List<UUID> whitelistUUIDs = new ArrayList<>();
     public static JDA getBot() {
         return bot;
     }
@@ -39,6 +39,8 @@ public final class AdvancedDiscord extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        whitelistConfig = WhitelistConfig.setup(this);
+
         saveDefaultConfig();
         String token = getConfig().getString("auth-token");
         try {
@@ -72,20 +74,24 @@ public final class AdvancedDiscord extends JavaPlugin {
     }
 
     public boolean isWhitelisted(Player player) {
-        return whitelistNames.contains(player.getName()) || whitelistUUIDs.contains(player.getUniqueId());
+        return whitelistConfig.getStringList("names").contains(player.getName())
+                || whitelistConfig.getStringList("uuids").contains(player.getUniqueId().toString());
     }
 
     public boolean isWhitelisted(Pair<String, UUID> data) {
-        return whitelistNames.contains(data.getLeft()) || whitelistUUIDs.contains(data.getRight());
+        return whitelistConfig.getStringList("names").contains(data.getLeft())
+                || whitelistConfig.getStringList("uuids").contains(data.getRight().toString());
     }
 
     public Pair<String, UUID> fetchPlayer(String name) {
         JsonObject resJson = httpGetJson("https://api.mojang.com/users/profiles/minecraft/" + name);
 
         String realNick = resJson.get("name").getAsString();
-        String uuid = resJson.get("id").getAsString();
+        BigInteger bi1 = new BigInteger(resJson.get("id").getAsString().substring(0, 16), 16);
+        BigInteger bi2 = new BigInteger(resJson.get("id").getAsString().substring(16, 32), 16);
+        UUID uuid = new UUID(bi1.longValue(), bi2.longValue());
 
-        return new ImmutablePair<>(realNick, UUID.fromString(uuid));
+        return new ImmutablePair<>(realNick, uuid);
     }
 
     public Pair<String, UUID> fetchPlayer(UUID uuid) {
@@ -107,5 +113,27 @@ public final class AdvancedDiscord extends JavaPlugin {
         }
 
         return parseReader(response.body().charStream()).getAsJsonObject();
+    }
+
+    public void addWhiteList(Pair<String, UUID> playerData) {
+        List<String> names = whitelistConfig.getStringList("names");
+        List<String> uuids = whitelistConfig.getStringList("uuids");
+
+        names.add(playerData.getLeft());
+        uuids.add(playerData.getRight().toString());
+
+        whitelistConfig.set("names", names);
+        whitelistConfig.set("uuids", uuids);
+    }
+
+    public void removeWhitelist(Pair<String, UUID> playerData) {
+        List<String> names = whitelistConfig.getStringList("names");
+        List<String> uuids = whitelistConfig.getStringList("uuids");
+
+        names.remove(playerData.getLeft());
+        uuids.remove(playerData.getRight().toString());
+
+        whitelistConfig.set("names", names);
+        whitelistConfig.set("uuids", uuids);
     }
 }

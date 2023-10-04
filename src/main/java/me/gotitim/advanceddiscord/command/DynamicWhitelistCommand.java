@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.UUID;
 
 public class DynamicWhitelistCommand implements CommandExecutor {
@@ -19,24 +20,29 @@ public class DynamicWhitelistCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 0) {
+            sender.sendMessage("USAGE: /dynlist <player>");
+            return false;
+        }
         String nameOrUUID = args[0];
         UUID playerUid;
         String playerName;
         try {
-            playerUid = UUID.fromString(nameOrUUID);
+            BigInteger bi1 = new BigInteger(nameOrUUID.substring(0, 16), 16);
+            BigInteger bi2 = new BigInteger(nameOrUUID.substring(16, 32), 16);
+            playerUid = new UUID(bi1.longValue(), bi2.longValue());
             playerName = plugin.fetchPlayer(playerUid).getLeft();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
             Pair<String, UUID> data = plugin.fetchPlayer(nameOrUUID);
             playerUid = data.getRight();
             playerName = data.getLeft();
         }
-        if (plugin.isWhitelisted(new ImmutablePair<>(playerName, playerUid))) {
-            plugin.whitelistNames.remove(playerName);
-            plugin.whitelistUUIDs.remove(playerUid);
+        Pair<String, UUID> data = new ImmutablePair<>(playerName, playerUid);
+        if (plugin.isWhitelisted(data)) {
+            plugin.removeWhitelist(data);
             sender.sendMessage("Un-Whitelisted " + playerName);
         } else {
-            plugin.whitelistUUIDs.add(playerUid);
-            plugin.whitelistNames.add(playerName);
+            plugin.addWhiteList(data);
             sender.sendMessage("Whitelisted " + playerName);
         }
 

@@ -27,7 +27,7 @@ public class Placeholders {
 
     public void set(Player player) {
         set("player-display", player.getDisplayName());
-        set("player-uuid", player.getUniqueId().toString());
+        set("player-uuid", AdvancedDiscord.getInstance().fetchPlayer(player.getName()).getRight().toString());
         set("player-world", player.getWorld().getName());
         set("player-dimension", player.getWorld().getEnvironment().name());
         set("player-ping", String.valueOf(player.getPing()));
