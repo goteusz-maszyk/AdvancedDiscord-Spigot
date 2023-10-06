@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
+import java.util.Objects;
 import java.util.UUID;
 
 public class DynamicWhitelistCommand implements CommandExecutor {
@@ -31,11 +32,11 @@ public class DynamicWhitelistCommand implements CommandExecutor {
             BigInteger bi1 = new BigInteger(nameOrUUID.substring(0, 16), 16);
             BigInteger bi2 = new BigInteger(nameOrUUID.substring(16, 32), 16);
             playerUid = new UUID(bi1.longValue(), bi2.longValue());
-            playerName = plugin.fetchPlayer(playerUid).getLeft();
+            playerName = Objects.requireNonNullElse(plugin.fetchPlayer(playerUid), new ImmutablePair<>((String) null,null)).getLeft();
         } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
             Pair<String, UUID> data = plugin.fetchPlayer(nameOrUUID);
-            playerUid = data.getRight();
-            playerName = data.getLeft();
+            playerUid = data == null ? null : data.getRight();
+            playerName = data == null ? nameOrUUID : data.getLeft();
         }
         Pair<String, UUID> data = new ImmutablePair<>(playerName, playerUid);
         if (plugin.isWhitelisted(data)) {

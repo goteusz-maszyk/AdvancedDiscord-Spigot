@@ -3,6 +3,7 @@ package me.gotitim.advanceddiscord.command;
 import me.gotitim.advanceddiscord.AdvancedDiscord;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.internal.utils.tuple.ImmutablePair;
 import net.dv8tion.jda.internal.utils.tuple.Pair;
 
 import java.awt.*;
@@ -13,7 +14,9 @@ public class DiscordLinkCommand {
         String nick = event.getOption("nick").getAsString();
 
         Pair<String, UUID> playerData = AdvancedDiscord.getInstance().fetchPlayer(nick);
-
+        if (playerData == null) {
+            playerData = new ImmutablePair<>(nick, null);
+        }
         AdvancedDiscord.getInstance().addWhiteList(playerData);
 
         EmbedBuilder embed = new EmbedBuilder()

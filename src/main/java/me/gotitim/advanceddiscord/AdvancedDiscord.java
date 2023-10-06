@@ -1,5 +1,6 @@
 package me.gotitim.advanceddiscord;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.gotitim.advanceddiscord.command.DynamicWhitelistCommand;
 import me.gotitim.advanceddiscord.listener.DiscordListener;
@@ -17,6 +18,8 @@ import okhttp3.Response;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.profile.PlayerProfile;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -78,14 +81,19 @@ public final class AdvancedDiscord extends JavaPlugin {
                 || whitelistConfig.getStringList("uuids").contains(player.getUniqueId().toString());
     }
 
-    public boolean isWhitelisted(Pair<String, UUID> data) {
+    public boolean isWhitelisted(@NonNull Pair<String, UUID> data) {
         return whitelistConfig.getStringList("names").contains(data.getLeft())
-                || whitelistConfig.getStringList("uuids").contains(data.getRight().toString());
+                || whitelistConfig.getStringList("uuids").contains(data.getRight() == null ? null : data.getRight().toString());
     }
 
-    public Pair<String, UUID> fetchPlayer(String name) {
+    public @Nullable Pair<String, UUID> fetchPlayer(String name) {
         JsonObject resJson = httpGetJson("https://api.mojang.com/users/profiles/minecraft/" + name);
-
+        if(resJson == null) {
+            return null;
+        }
+        if(resJson.get("errorMessage") != null) {
+            return null;
+        }
         String realNick = resJson.get("name").getAsString();
         BigInteger bi1 = new BigInteger(resJson.get("id").getAsString().substring(0, 16), 16);
         BigInteger bi2 = new BigInteger(resJson.get("id").getAsString().substring(16, 32), 16);
@@ -95,8 +103,10 @@ public final class AdvancedDiscord extends JavaPlugin {
     }
 
     public Pair<String, UUID> fetchPlayer(UUID uuid) {
-        String realNick = httpGetJson("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid).get("name").getAsString();
-        return new ImmutablePair<>(realNick, uuid);
+        JsonObject resJson = httpGetJson("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
+        if(resJson == null) return null;
+        JsonElement realNick = resJson.get("name");
+        return new ImmutablePair<>(realNick == null ? null : realNick.getAsString(), uuid);
     }
 
     public JsonObject httpGetJson(String url) {
@@ -120,7 +130,9 @@ public final class AdvancedDiscord extends JavaPlugin {
         List<String> uuids = whitelistConfig.getStringList("uuids");
 
         names.add(playerData.getLeft());
-        uuids.add(playerData.getRight().toString());
+        if (playerData.getRight() != null) {
+            uuids.add(playerData.getRight().toString());
+        }
 
         whitelistConfig.set("names", names);
         whitelistConfig.set("uuids", uuids);

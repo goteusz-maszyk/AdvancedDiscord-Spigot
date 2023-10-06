@@ -1,5 +1,6 @@
 package me.gotitim.advanceddiscord;
 
+import net.dv8tion.jda.internal.utils.tuple.Pair;
 import org.bukkit.ChatColor;
 import org.bukkit.advancement.AdvancementDisplay;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Placeholders {
     private final Map<String, String> placeholders;
@@ -27,7 +29,8 @@ public class Placeholders {
 
     public void set(Player player) {
         set("player-display", player.getDisplayName());
-        set("player-uuid", AdvancedDiscord.getInstance().fetchPlayer(player.getName()).getRight().toString());
+        Pair<String, UUID> playerData = AdvancedDiscord.getInstance().fetchPlayer(player.getName());
+        set("player-uuid", playerData == null ? player.getUniqueId().toString() : playerData.getRight().toString());
         set("player-world", player.getWorld().getName());
         set("player-dimension", player.getWorld().getEnvironment().name());
         set("player-ping", String.valueOf(player.getPing()));
