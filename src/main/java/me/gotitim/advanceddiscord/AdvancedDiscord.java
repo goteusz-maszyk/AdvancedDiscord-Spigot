@@ -129,8 +129,10 @@ public final class AdvancedDiscord extends JavaPlugin {
         List<String> names = whitelistConfig.getStringList("names");
         List<String> uuids = whitelistConfig.getStringList("uuids");
 
-        names.add(playerData.getLeft());
-        if (playerData.getRight() != null) {
+        if(!names.contains(playerData.getLeft())) {
+            names.add(playerData.getLeft());
+        }
+        if (playerData.getRight() != null && !uuids.contains(playerData.getRight().toString())) {
             uuids.add(playerData.getRight().toString());
         }
 
