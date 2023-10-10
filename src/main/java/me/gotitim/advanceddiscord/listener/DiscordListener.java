@@ -4,6 +4,7 @@ import me.gotitim.advanceddiscord.AdvancedDiscord;
 import me.gotitim.advanceddiscord.Discord;
 import me.gotitim.advanceddiscord.Placeholders;
 import me.gotitim.advanceddiscord.command.DiscordLinkCommand;
+import me.gotitim.advanceddiscord.command.DiscordListCommand;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -44,6 +45,7 @@ public class DiscordListener extends ListenerAdapter {
                 AdvancedDiscord.getInstance().getConfig().getString("discord-whitelist-cmd-description", "Add yourself to whitelist"))
                 .addOption(OptionType.STRING, "nick", AdvancedDiscord.getInstance().getConfig().getString("discord-nick-arg-description", "Your IGN"))
                 .queue();
+        AdvancedDiscord.getBot().upsertCommand("list", "Shows the names of all currently-connected players").queue();
 
         String channelId = AdvancedDiscord.getInstance().getConfig().getString("discord-channel");
         if(channelId == null) {
@@ -100,6 +102,7 @@ public class DiscordListener extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         switch (event.getName()) {
             case "linkmc" -> new DiscordLinkCommand().exec(event);
+            case "list" -> new DiscordListCommand().exec(event);
         }
     }
 }
